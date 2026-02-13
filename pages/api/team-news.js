@@ -1,5 +1,7 @@
+import { resolveImage } from '../../lib/imageResolver';
+
 export default async function handler(req, res) {
-  res.setHeader('Cache-Control', 'public, max-age=300');
+  res.setHeader('Cache-Control', 'public, max-age=120');
 
   const team = req.query.team || 'Al Hilal';
 
@@ -20,14 +22,20 @@ export default async function handler(req, res) {
         return res.status(200).json({
           success: true,
           team,
-          articles: data.items.map(item => ({
-            title: item.title,
-            description: (item.description || '').replace(/<[^>]*>/g, '').substring(0, 300),
-            url: item.link,
-            image: item.thumbnail || item.enclosure?.thumbnail || null,
-            publishedAt: item.pubDate,
-            source: item.author || 'Google News'
-          }))
+          articles: data.items.map((item, i) => {
+            const title = item.title || '';
+            const description = (item.description || '').replace(/<[^>]*>/g, '').substring(0, 300);
+            const existingImage = item.thumbnail || item.enclosure?.thumbnail || null;
+
+            return {
+              title,
+              description,
+              url: item.link,
+              image: resolveImage(title, description, existingImage, i),
+              publishedAt: item.pubDate,
+              source: item.author || 'Google News'
+            };
+          })
         });
       }
     }

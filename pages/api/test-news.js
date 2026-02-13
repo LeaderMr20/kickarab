@@ -1,3 +1,22 @@
+import { resolveImage } from '../../lib/imageResolver';
+
+function formatArticles(items, source) {
+  return items.map((item, i) => {
+    const title = item.title || '';
+    const description = (item.description || '').replace(/<[^>]*>/g, '').substring(0, 300);
+    const existingImage = item.thumbnail || item.enclosure?.thumbnail || null;
+
+    return {
+      title,
+      description,
+      url: item.link,
+      image: resolveImage(title, description, existingImage, i),
+      publishedAt: item.pubDate,
+      source: item.author || source
+    };
+  });
+}
+
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'public, max-age=120');
 
@@ -20,14 +39,7 @@ export default async function handler(req, res) {
           return res.status(200).json({
             success: true,
             source: 'أخبار عربية',
-            articles: data.items.map(item => ({
-              title: item.title,
-              description: (item.description || '').replace(/<[^>]*>/g, '').substring(0, 300),
-              url: item.link,
-              image: item.thumbnail || item.enclosure?.thumbnail || null,
-              publishedAt: item.pubDate,
-              source: item.author || 'أخبار كرة القدم'
-            }))
+            articles: formatArticles(data.items, 'أخبار كرة القدم')
           });
         }
       }
@@ -53,14 +65,7 @@ export default async function handler(req, res) {
           return res.status(200).json({
             success: true,
             source: 'أخبار الدوريات',
-            articles: data.items.map(item => ({
-              title: item.title,
-              description: (item.description || '').replace(/<[^>]*>/g, '').substring(0, 300),
-              url: item.link,
-              image: item.thumbnail || item.enclosure?.thumbnail || null,
-              publishedAt: item.pubDate,
-              source: item.author || 'أخبار رياضية'
-            }))
+            articles: formatArticles(data.items, 'أخبار رياضية')
           });
         }
       }
@@ -85,14 +90,7 @@ export default async function handler(req, res) {
           return res.status(200).json({
             success: true,
             source: 'BBC Sport',
-            articles: data.items.map(item => ({
-              title: item.title,
-              description: (item.description || '').replace(/<[^>]*>/g, '').substring(0, 300),
-              url: item.link,
-              image: item.thumbnail || item.enclosure?.thumbnail || null,
-              publishedAt: item.pubDate,
-              source: 'BBC Sport'
-            }))
+            articles: formatArticles(data.items, 'BBC Sport')
           });
         }
       }
