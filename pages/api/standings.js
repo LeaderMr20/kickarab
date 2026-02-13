@@ -21,6 +21,14 @@ const teamNamesAr = {
   'Sevilla': 'إشبيلية', 'Getafe': 'خيتافي', 'Valencia': 'فالنسيا',
   'Espanyol': 'إسبانيول', 'Las Palmas': 'لاس بالماس',
   'Deportivo Alaves': 'ألافيس', 'Leganes': 'ليغانيس', 'Valladolid': 'بلد الوليد',
+  'Bayern Munich': 'بايرن ميونخ', 'Borussia Dortmund': 'بروسيا دورتموند',
+  'Bayer Leverkusen': 'باير ليفركوزن', 'RB Leipzig': 'لايبزيغ',
+  'Eintracht Frankfurt': 'آينتراخت فرانكفورت', 'VfB Stuttgart': 'شتوتغارت',
+  'SC Freiburg': 'فرايبورغ', 'Mainz 05': 'ماينز', 'Wolfsburg': 'فولفسبورغ',
+  'Borussia Monchengladbach': 'بوروسيا مونشنغلادباخ', 'Werder Bremen': 'فيردر بريمن',
+  'Union Berlin': 'يونيون برلين', 'FC Augsburg': 'أوغسبورغ',
+  'TSG Hoffenheim': 'هوفنهايم', 'VfL Bochum': 'بوخوم',
+  'Holstein Kiel': 'هولشتاين كيل', 'FC Heidenheim': 'هايدنهايم', 'FC St. Pauli': 'سانت باولي',
 };
 
 function getStat(stats, name) {
@@ -34,7 +42,7 @@ export default async function handler(req, res) {
   const leagues = [
     { url: 'https://site.web.api.espn.com/apis/v2/sports/soccer/eng.1/standings', nameAr: 'الدوري الإنجليزي', icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
     { url: 'https://site.web.api.espn.com/apis/v2/sports/soccer/esp.1/standings', nameAr: 'الدوري الإسباني', icon: '🇪🇸' },
-    { url: 'https://site.web.api.espn.com/apis/v2/sports/soccer/sau.1/standings', nameAr: 'دوري روشن', icon: '🇸🇦' },
+    { url: 'https://site.web.api.espn.com/apis/v2/sports/soccer/ger.1/standings', nameAr: 'الدوري الألماني', icon: '🇩🇪' },
   ];
 
   try {
