@@ -37,7 +37,7 @@ function getStat(stats, name) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Cache-Control', 'public, max-age=120');
+  res.setHeader('Cache-Control', 'public, max-age=60');
 
   const leagues = [
     { url: 'https://site.web.api.espn.com/apis/v2/sports/soccer/eng.1/standings', nameAr: 'الدوري الإنجليزي', icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },

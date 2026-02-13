@@ -55,8 +55,8 @@ export default function LiveMatches() {
     }
 
     fetchMatches();
-    // Auto-refresh every 60 seconds
-    const interval = setInterval(fetchMatches, 60000);
+    // Auto-refresh every 30 seconds for real-time updates
+    const interval = setInterval(fetchMatches, 30000);
     return () => clearInterval(interval);
   }, []);
 

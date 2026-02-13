@@ -97,7 +97,7 @@ function parseESPNEvent(event, leagueInfo) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Cache-Control', 'public, max-age=60');
+  res.setHeader('Cache-Control', 'public, max-age=30');
 
   const leagues = [
     { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard', id: 39, nameAr: 'الدوري الإنجليزي', icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },

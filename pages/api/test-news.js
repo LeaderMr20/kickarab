@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  res.setHeader('Cache-Control', 'public, max-age=300');
+  res.setHeader('Cache-Control', 'public, max-age=120');
 
   try {
     // Source 1: Arabic football news (priority)

@@ -24,8 +24,8 @@ export default function NewsTicker() {
 
     loadBreakingNews();
 
-    // Refresh every 5 minutes
-    const refreshInterval = setInterval(loadBreakingNews, 5 * 60 * 1000);
+    // Refresh every 3 minutes
+    const refreshInterval = setInterval(loadBreakingNews, 3 * 60 * 1000);
     return () => clearInterval(refreshInterval);
   }, []);
 
