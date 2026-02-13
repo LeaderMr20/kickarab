@@ -1,12 +1,15 @@
-import { useState, useMemo } from "react";
-import { fallbackMatches } from "../lib/fallbackData";
+import { useState, useEffect, useMemo } from "react";
 import MatchCard from "./MatchCard";
 
 const LEAGUE_FILTERS = [
   { key: "all", label: "الكل" },
   { key: "epl", label: "الدوري الإنجليزي", icon: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
   { key: "spl", label: "الدوري السعودي", icon: "🇸🇦" },
+  { key: "ucl", label: "دوري الأبطال", icon: "🏆" },
+  { key: "laliga", label: "الدوري الإسباني", icon: "🇪🇸" },
 ];
+
+const leagueIdMap = { epl: 39, spl: 307, ucl: 2, laliga: 140 };
 
 function SkeletonCard() {
   return (
@@ -32,32 +35,51 @@ function SkeletonCard() {
 
 export default function LiveMatches() {
   const [activeFilter, setActiveFilter] = useState("all");
+  const [allMatches, setAllMatches] = useState([]);
+  const [hasLive, setHasLive] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const data = { matches: fallbackMatches };
-  const loading = false;
+  useEffect(() => {
+    async function fetchMatches() {
+      try {
+        const res = await fetch('/api/matches');
+        if (!res.ok) throw new Error('Failed');
+        const data = await res.json();
+        setAllMatches(data.matches || []);
+        setHasLive(data.hasLive || false);
+      } catch (err) {
+        console.error('Matches fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchMatches();
+    // Auto-refresh every 60 seconds
+    const interval = setInterval(fetchMatches, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const matches = useMemo(() => {
-    if (!data?.matches) return [];
-    if (activeFilter === "all") return data.matches;
-    const leagueId = activeFilter === "epl" ? 39 : 307;
-    return data.matches.filter((m) => m.league.id === leagueId);
-  }, [data, activeFilter]);
+    if (activeFilter === "all") return allMatches;
+    const leagueId = leagueIdMap[activeFilter];
+    return allMatches.filter((m) => m.league.id === leagueId);
+  }, [allMatches, activeFilter]);
 
   return (
     <section id="matches" className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Title */}
         <div className="text-center mb-10">
           <h2 className="section-title">
             <span className="gradient-text">مباريات</span> اليوم
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            تابع نتائج وأحداث مباريات الدوري الإنجليزي والسعودي لحظة بلحظة
+            تابع نتائج وأحداث المباريات لحظة بلحظة
           </p>
         </div>
 
         {/* League Toggle */}
-        <div className="flex items-center justify-center gap-2 mb-10">
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
           {LEAGUE_FILTERS.map((filter) => (
             <button
               key={filter.key}
@@ -102,7 +124,7 @@ export default function LiveMatches() {
         )}
 
         {/* Live indicator */}
-        {data?.hasLive && (
+        {hasLive && (
           <div className="text-center mt-6">
             <div className="inline-flex items-center gap-2 bg-brand-500/10 border border-brand-500/20 rounded-full px-4 py-2">
               <span className="relative flex h-2 w-2">

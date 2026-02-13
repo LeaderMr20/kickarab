@@ -7,6 +7,7 @@ import LiveMatches from "../components/LiveMatches";
 import WeeklyStars from "../components/WeeklyStars";
 import LatestNews from "../components/LatestNews";
 import TeamSpotlight from "../components/TeamSpotlight";
+import LeagueStandings from "../components/LeagueStandings";
 import AuthModal from "../components/AuthModal";
 
 const stats = [
@@ -124,6 +125,9 @@ export default function Home() {
 
         {/* Latest News */}
         <LatestNews />
+
+        {/* League Standings */}
+        <LeagueStandings />
 
         {/* Team Spotlight - Al Hilal */}
         <TeamSpotlight />

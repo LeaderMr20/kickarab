@@ -9,23 +9,19 @@ export function useLiveData(url, { refreshInterval = 0, enabled = true } = {}) {
 
   const fetchData = useCallback(async () => {
     try {
-      // For static export, use fallback data
-      if (url === "/api/matches") {
-        setData({ matches: fallbackMatches });
-        setError(null);
-      } else if (url === "/api/weekly-stars") {
-        setData({ stars: fallbackWeeklyStars });
-        setError(null);
-      } else {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        setData(json);
-        setError(null);
-      }
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      setData(json);
+      setError(null);
     } catch (err) {
       setError(err);
-      // Keep stale data on error
+      // Fallback to static data on error
+      if (url === "/api/matches") {
+        setData({ matches: fallbackMatches });
+      } else if (url === "/api/weekly-stars") {
+        setData({ stars: fallbackWeeklyStars });
+      }
     } finally {
       setLoading(false);
     }

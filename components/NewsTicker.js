@@ -1,32 +1,48 @@
 import { useState, useEffect } from "react";
+import { fetchBreakingNews } from "../lib/newsApi";
 
-const breakingNews = [
-  { id: 1, text: "عاجل: محمد صلاح يسجل هاتريك ويقود ليفربول لصدارة الدوري الإنجليزي", urgent: true },
-  { id: 2, text: "الهلال يتعاقد مع نجم جديد لدعم صفوف الفريق في الموسم الحالي", urgent: false },
-  { id: 3, text: "رونالدو يصل للهدف رقم 920 في مسيرته مع النصر السعودي", urgent: true },
-  { id: 4, text: "مانشستر سيتي يعلن عن تجديد عقد هالاند حتى 2030", urgent: false },
-  { id: 5, text: "الاتحاد السعودي يعلن مواعيد الجولة القادمة من دوري روشن", urgent: false },
-  { id: 6, text: "أرسنال يقترب من ضم جناح برشلونة في صفقة انتقال شتوية", urgent: true },
-  { id: 7, text: "نيمار يعود للتدريبات الجماعية مع الهلال بعد غياب طويل", urgent: false },
-  { id: 8, text: "الفيفا يعلن عن تعديلات جديدة في قوانين كرة القدم لموسم 2026", urgent: false },
+const fallbackNews = [
+  { id: 1, text: "جاري تحميل آخر الأخبار...", urgent: false }
 ];
 
 export default function NewsTicker() {
+  const [news, setNews] = useState(fallbackNews);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
+    async function loadBreakingNews() {
+      try {
+        const headlines = await fetchBreakingNews();
+        if (headlines.length > 0) {
+          setNews(headlines);
+        }
+      } catch (err) {
+        console.error("Failed to load breaking news:", err);
+      }
+    }
+
+    loadBreakingNews();
+
+    // Refresh every 5 minutes
+    const refreshInterval = setInterval(loadBreakingNews, 5 * 60 * 1000);
+    return () => clearInterval(refreshInterval);
+  }, []);
+
+  useEffect(() => {
+    if (news.length <= 1) return;
+
     const interval = setInterval(() => {
       setIsAnimating(true);
       setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % breakingNews.length);
+        setCurrentIndex((prev) => (prev + 1) % news.length);
         setIsAnimating(false);
       }, 500);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [news.length]);
 
-  const current = breakingNews[currentIndex];
+  const current = news[currentIndex] || news[0];
 
   return (
     <div className="fixed top-16 right-0 left-0 z-40 bg-pitch-light/95 backdrop-blur-md border-b border-brand-500/10">
@@ -59,16 +75,18 @@ export default function NewsTicker() {
           </div>
 
           {/* Counter */}
-          <div className="flex-shrink-0 flex items-center gap-1">
-            {breakingNews.map((_, idx) => (
-              <span
-                key={idx}
-                className={`w-1 md:w-1.5 h-1 md:h-1.5 rounded-full transition-all duration-300 ${
-                  idx === currentIndex ? "bg-brand-500 w-3 md:w-4" : "bg-gray-700"
-                }`}
-              />
-            ))}
-          </div>
+          {news.length > 1 && (
+            <div className="flex-shrink-0 flex items-center gap-1">
+              {news.map((_, idx) => (
+                <span
+                  key={idx}
+                  className={`w-1 md:w-1.5 h-1 md:h-1.5 rounded-full transition-all duration-300 ${
+                    idx === currentIndex ? "bg-brand-500 w-3 md:w-4" : "bg-gray-700"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
