@@ -1,0 +1,67 @@
+/* KickArab Theme - Custom Styles */
+
+/* Gradient backgrounds */
+.hero-gradient {
+  background: radial-gradient(ellipse at 50% 0%, rgba(34, 197, 94, 0.15) 0%, transparent 60%),
+    linear-gradient(180deg, #0d1117 0%, #161b22 100%);
+}
+
+.card-gradient {
+  background: linear-gradient(145deg, rgba(28, 35, 51, 0.8), rgba(13, 17, 23, 0.9));
+}
+
+/* Field pattern overlay */
+.field-pattern {
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 40px,
+    rgba(34, 197, 94, 0.03) 40px,
+    rgba(34, 197, 94, 0.03) 41px
+  );
+}
+
+/* Star badge for weekly stars */
+.star-badge {
+  position: relative;
+}
+
+.star-badge::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  left: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, #22c55e, #fbbf24, #22c55e);
+  border-radius: 18px;
+  z-index: -1;
+  animation: borderRotate 3s linear infinite;
+}
+
+@keyframes borderRotate {
+  0% {
+    background: linear-gradient(0deg, #22c55e, #fbbf24, #22c55e);
+  }
+  25% {
+    background: linear-gradient(90deg, #22c55e, #fbbf24, #22c55e);
+  }
+  50% {
+    background: linear-gradient(180deg, #22c55e, #fbbf24, #22c55e);
+  }
+  75% {
+    background: linear-gradient(270deg, #22c55e, #fbbf24, #22c55e);
+  }
+  100% {
+    background: linear-gradient(360deg, #22c55e, #fbbf24, #22c55e);
+  }
+}
+
+/* Glow effects */
+.glow-green {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3), 0 0 40px rgba(34, 197, 94, 0.1);
+}
+
+.glow-gold {
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.3), 0 0 40px rgba(251, 191, 36, 0.1);
+}
