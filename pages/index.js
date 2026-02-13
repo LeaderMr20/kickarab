@@ -140,7 +140,7 @@ export default function Home() {
                 لماذا <span className="gradient-text">KickArab</span>؟
               </h2>
               <p className="text-gray-400 text-sm md:text-base lg:text-lg max-w-2xl mx-auto mt-2 md:mt-3">
-                منصة متكاملة صُممت خصيصاً لعشاق كرة القدم العرب
+                منصة متكاملة صُممت خصيصاً لعشاق كرة القدم العرب | برمجة <span className="text-brand-400 font-semibold">m-abualabbas</span>
               </p>
             </div>
 

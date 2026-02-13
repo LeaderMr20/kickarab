@@ -70,7 +70,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} KickArab. جميع الحقوق محفوظة.
           </p>
           <p className="text-gray-600 text-xs text-center">
-            صُنع بشغف لعشاق الكرة العربية
+            برمجة <span className="text-brand-400 font-semibold">m-abualabbas</span>
           </p>
         </div>
       </div>
