@@ -2,17 +2,5 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
-  "framework": "nextjs",
-  "env": [
-    {
-      "key": "FOOTBALL_API_KEY",
-      "value": "",
-      "type": "secret"
-    },
-    {
-      "key": "NODE_ENV",
-      "value": "production",
-      "type": "plaintext"
-    }
-  ]
+  "framework": "nextjs"
 }
