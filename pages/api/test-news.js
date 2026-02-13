@@ -73,13 +73,14 @@ export default async function handler(req, res) {
       console.log('Arabic leagues failed:', e.message);
     }
 
-    // Source 3: BBC Sport Football RSS
+    // Source 3: Arabic transfer/player news
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 8000);
 
+      const rssUrl = encodeURIComponent('https://news.google.com/rss/search?q=صفقات+انتقالات+لاعبين+كرة+القدم&hl=ar&gl=SA&ceid=SA:ar');
       const response = await fetch(
-        'https://api.rss2json.com/v1/api.json?rss_url=https://feeds.bbci.co.uk/sport/football/rss.xml',
+        'https://api.rss2json.com/v1/api.json?rss_url=' + rssUrl,
         { signal: controller.signal }
       );
       clearTimeout(timeout);
@@ -89,13 +90,13 @@ export default async function handler(req, res) {
         if (data.status === 'ok' && data.items?.length > 0) {
           return res.status(200).json({
             success: true,
-            source: 'BBC Sport',
-            articles: formatArticles(data.items, 'BBC Sport')
+            source: 'أخبار انتقالات',
+            articles: formatArticles(data.items, 'أخبار انتقالات')
           });
         }
       }
     } catch (e) {
-      console.log('BBC Sport failed:', e.message);
+      console.log('Arabic transfers failed:', e.message);
     }
 
     return res.status(503).json({

@@ -5,11 +5,20 @@ export default async function handler(req, res) {
 
   const team = req.query.team || 'Al Hilal';
 
+  // Arabic team name mapping for search
+  const teamArNames = {
+    'Al Hilal': 'نادي الهلال السعودي',
+    'Al Nassr': 'نادي النصر السعودي',
+    'Al Ittihad': 'نادي الاتحاد السعودي',
+    'Al Ahli': 'نادي الأهلي السعودي',
+  };
+  const searchTerm = teamArNames[team] || team;
+
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 8000);
 
-    const rssUrl = encodeURIComponent(`https://news.google.com/rss/search?q=${team}+football&hl=en&gl=US&ceid=US:en`);
+    const rssUrl = encodeURIComponent(`https://news.google.com/rss/search?q=${searchTerm}&hl=ar&gl=SA&ceid=SA:ar`);
     const response = await fetch(
       'https://api.rss2json.com/v1/api.json?rss_url=' + rssUrl,
       { signal: controller.signal }
