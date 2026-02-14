@@ -109,6 +109,9 @@ export default function TeamSpotlight() {
     }
 
     loadTeamNews();
+    // Auto-refresh team news every 60 seconds
+    const interval = setInterval(loadTeamNews, 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   const visibleNews = showAll ? teamNews : teamNews.slice(0, 4);

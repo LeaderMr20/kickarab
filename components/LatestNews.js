@@ -79,8 +79,8 @@ export default function LatestNews() {
     }
 
     loadNews();
-    // Auto-refresh news every 3 minutes
-    const interval = setInterval(loadNews, 3 * 60 * 1000);
+    // Auto-refresh news every 45 seconds for faster updates
+    const interval = setInterval(loadNews, 45 * 1000);
     return () => clearInterval(interval);
   }, []);
 

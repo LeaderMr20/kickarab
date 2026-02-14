@@ -96,8 +96,8 @@ export default function WeeklyStars() {
     }
 
     fetchStars();
-    // Refresh every 3 minutes
-    const interval = setInterval(fetchStars, 3 * 60 * 1000);
+    // Refresh every 90 seconds
+    const interval = setInterval(fetchStars, 90 * 1000);
     return () => clearInterval(interval);
   }, []);
 

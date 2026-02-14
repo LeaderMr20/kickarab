@@ -18,7 +18,7 @@ function formatArticles(items, source) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Cache-Control', 'public, max-age=120');
+  res.setHeader('Cache-Control', 'public, max-age=30, stale-while-revalidate=15');
 
   try {
     // Source 1: Arabic football news (priority)

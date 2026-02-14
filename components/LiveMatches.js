@@ -55,8 +55,8 @@ export default function LiveMatches() {
     }
 
     fetchMatches();
-    // Auto-refresh every 30 seconds for real-time updates
-    const interval = setInterval(fetchMatches, 30000);
+    // Auto-refresh every 15 seconds for real-time updates
+    const interval = setInterval(fetchMatches, 15000);
     return () => clearInterval(interval);
   }, []);
 
@@ -132,7 +132,7 @@ export default function LiveMatches() {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
               </span>
               <span className="text-xs font-semibold text-brand-400">
-                يتم التحديث تلقائياً كل دقيقة
+                يتم التحديث تلقائياً كل 15 ثانية
               </span>
             </div>
           </div>

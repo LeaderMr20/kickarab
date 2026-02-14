@@ -36,7 +36,7 @@ function getName(n) { return playerNamesAr[n] || n; }
 function getTeam(n) { return teamNamesAr[n] || n; }
 
 export default async function handler(req, res) {
-  res.setHeader('Cache-Control', 'public, max-age=120');
+  res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=30');
 
   const leagues = [
     { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard', league: 'الدوري الإنجليزي', icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },

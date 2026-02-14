@@ -103,8 +103,8 @@ export default function LeagueStandings() {
     }
 
     fetchStandings();
-    // Refresh every 60 seconds
-    const interval = setInterval(fetchStandings, 60000);
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchStandings, 30000);
     return () => clearInterval(interval);
   }, []);
 

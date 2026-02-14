@@ -1,7 +1,7 @@
 import { resolveImage } from '../../lib/imageResolver';
 
 export default async function handler(req, res) {
-  res.setHeader('Cache-Control', 'public, max-age=120');
+  res.setHeader('Cache-Control', 'public, max-age=30, stale-while-revalidate=15');
 
   const team = req.query.team || 'Al Hilal';
 
