@@ -133,33 +133,38 @@ function parseESPNEvent(event, leagueInfo) {
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'public, max-age=10, stale-while-revalidate=5');
 
-  const leagues = [
+  // Support date query: ?date=20260214 (YYYYMMDD format)
+  const dateParam = req.query.date || '';
+  const dateQuery = dateParam ? `?dates=${dateParam}` : '';
+
+  const leagueKeys = [
     // الدوريات الكبرى
-    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard', id: 39, nameAr: 'الدوري الإنجليزي', icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
-    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/sau.1/scoreboard', id: 307, nameAr: 'دوري روشن', icon: '🇸🇦' },
-    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard', id: 140, nameAr: 'الدوري الإسباني', icon: '🇪🇸' },
-    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard', id: 135, nameAr: 'الدوري الإيطالي', icon: '🇮🇹' },
-    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard', id: 78, nameAr: 'الدوري الألماني', icon: '🇩🇪' },
-    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/fra.1/scoreboard', id: 61, nameAr: 'الدوري الفرنسي', icon: '🇫🇷' },
+    { key: 'eng.1', id: 39, nameAr: 'الدوري الإنجليزي', icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+    { key: 'sau.1', id: 307, nameAr: 'دوري روشن', icon: '🇸🇦' },
+    { key: 'esp.1', id: 140, nameAr: 'الدوري الإسباني', icon: '🇪🇸' },
+    { key: 'ita.1', id: 135, nameAr: 'الدوري الإيطالي', icon: '🇮🇹' },
+    { key: 'ger.1', id: 78, nameAr: 'الدوري الألماني', icon: '🇩🇪' },
+    { key: 'fra.1', id: 61, nameAr: 'الدوري الفرنسي', icon: '🇫🇷' },
     // البطولات الأوروبية
-    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard', id: 2, nameAr: 'دوري الأبطال', icon: '🏆' },
-    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa/scoreboard', id: 3, nameAr: 'الدوري الأوروبي', icon: '🏆' },
-    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa.conf/scoreboard', id: 848, nameAr: 'دوري المؤتمر', icon: '🏆' },
+    { key: 'uefa.champions', id: 2, nameAr: 'دوري الأبطال', icon: '🏆' },
+    { key: 'uefa.europa', id: 3, nameAr: 'الدوري الأوروبي', icon: '🏆' },
+    { key: 'uefa.europa.conf', id: 848, nameAr: 'دوري المؤتمر', icon: '🏆' },
     // الكؤوس المحلية
-    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.fa/scoreboard', id: 45, nameAr: 'كأس الاتحاد الإنجليزي', icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
-    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.league_cup/scoreboard', id: 48, nameAr: 'كأس الرابطة الإنجليزية', icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
-    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.copa_del_rey/scoreboard', id: 143, nameAr: 'كأس ملك إسبانيا', icon: '🇪🇸' },
+    { key: 'eng.fa', id: 45, nameAr: 'كأس الاتحاد الإنجليزي', icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+    { key: 'eng.league_cup', id: 48, nameAr: 'كأس الرابطة الإنجليزية', icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+    { key: 'esp.copa_del_rey', id: 143, nameAr: 'كأس ملك إسبانيا', icon: '🇪🇸' },
   ];
 
   try {
     const allMatches = [];
 
     const results = await Promise.allSettled(
-      leagues.map(async (league) => {
+      leagueKeys.map(async (league) => {
         try {
           const controller = new AbortController();
           const timeout = setTimeout(() => controller.abort(), 8000);
-          const response = await fetch(league.url, { signal: controller.signal });
+          const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${league.key}/scoreboard${dateQuery}`;
+          const response = await fetch(url, { signal: controller.signal });
           clearTimeout(timeout);
           if (!response.ok) return [];
           const data = await response.json();

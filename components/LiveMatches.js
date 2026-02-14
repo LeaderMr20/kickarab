@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import MatchCard from "./MatchCard";
 
 const LEAGUE_FILTERS = [
@@ -17,6 +17,32 @@ const leagueIdMap = {
   seriea: 135, bundesliga: 78, ligue1: 61,
   cups: [2, 3, 848, 45, 48, 143],
 };
+
+// Generate day tabs: yesterday, today, +5 days ahead
+function getDayTabs() {
+  const tabs = [];
+  const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+
+  for (let i = -1; i <= 5; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const dateKey = `${yyyy}${mm}${dd}`;
+
+    let label;
+    if (i === -1) label = 'أمس';
+    else if (i === 0) label = 'اليوم';
+    else if (i === 1) label = 'غداً';
+    else label = dayNames[d.getDay()];
+
+    const dateLabel = `${dd}/${mm}`;
+
+    tabs.push({ key: dateKey, label, dateLabel, isToday: i === 0 });
+  }
+  return tabs;
+}
 
 function SkeletonCard() {
   return (
@@ -41,31 +67,41 @@ function SkeletonCard() {
 }
 
 export default function LiveMatches() {
+  const dayTabs = useMemo(() => getDayTabs(), []);
+  const todayKey = dayTabs.find(t => t.isToday)?.key || '';
+
+  const [activeDay, setActiveDay] = useState(todayKey);
   const [activeFilter, setActiveFilter] = useState("all");
   const [allMatches, setAllMatches] = useState([]);
   const [hasLive, setHasLive] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchMatches() {
-      try {
-        const res = await fetch('/api/matches');
-        if (!res.ok) throw new Error('Failed');
-        const data = await res.json();
-        setAllMatches(data.matches || []);
-        setHasLive(data.hasLive || false);
-      } catch (err) {
-        console.error('Matches fetch error:', err);
-      } finally {
-        setLoading(false);
-      }
+  const fetchMatches = useCallback(async (dateKey) => {
+    try {
+      setLoading(true);
+      const url = dateKey === todayKey
+        ? '/api/matches'
+        : `/api/matches?date=${dateKey}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Failed');
+      const data = await res.json();
+      setAllMatches(data.matches || []);
+      setHasLive(data.hasLive || false);
+    } catch (err) {
+      console.error('Matches fetch error:', err);
+    } finally {
+      setLoading(false);
     }
+  }, [todayKey]);
 
-    fetchMatches();
-    // Auto-refresh every 15 seconds for real-time updates
-    const interval = setInterval(fetchMatches, 15000);
-    return () => clearInterval(interval);
-  }, []);
+  useEffect(() => {
+    fetchMatches(activeDay);
+    // Auto-refresh every 15 seconds only for today
+    if (activeDay === todayKey) {
+      const interval = setInterval(() => fetchMatches(activeDay), 15000);
+      return () => clearInterval(interval);
+    }
+  }, [activeDay, todayKey, fetchMatches]);
 
   const matches = useMemo(() => {
     if (activeFilter === "all") return allMatches;
@@ -76,16 +112,38 @@ export default function LiveMatches() {
     return allMatches.filter((m) => m.league.id === filterVal);
   }, [allMatches, activeFilter]);
 
+  const currentDayLabel = dayTabs.find(t => t.key === activeDay)?.label || 'اليوم';
+
   return (
     <section id="matches" className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <h2 className="section-title">
-            <span className="gradient-text">مباريات</span> اليوم
+            <span className="gradient-text">مباريات</span> {currentDayLabel}
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             تابع نتائج وأحداث المباريات لحظة بلحظة
           </p>
+        </div>
+
+        {/* Day Selector */}
+        <div className="flex items-center justify-center gap-1 sm:gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+          {dayTabs.map((day) => (
+            <button
+              key={day.key}
+              onClick={() => { setActiveDay(day.key); setActiveFilter("all"); }}
+              className={`flex flex-col items-center px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 flex-shrink-0 min-w-[60px] ${
+                activeDay === day.key
+                  ? "bg-brand-500 text-white shadow-lg shadow-brand-500/25"
+                  : "bg-pitch-card text-gray-400 hover:text-white hover:bg-pitch-card/80 border border-gray-800"
+              }`}
+            >
+              <span>{day.label}</span>
+              <span className={`text-[10px] mt-0.5 ${activeDay === day.key ? 'text-white/70' : 'text-gray-600'}`}>
+                {day.dateLabel}
+              </span>
+            </button>
+          ))}
         </div>
 
         {/* League Toggle */}
@@ -94,10 +152,10 @@ export default function LiveMatches() {
             <button
               key={filter.key}
               onClick={() => setActiveFilter(filter.key)}
-              className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 ${
                 activeFilter === filter.key
-                  ? "bg-brand-500 text-white shadow-lg shadow-brand-500/25"
-                  : "bg-pitch-card text-gray-400 hover:text-white hover:bg-pitch-card/80 border border-gray-800"
+                  ? "bg-brand-500/20 text-brand-400 border border-brand-500/50"
+                  : "bg-pitch-card text-gray-500 hover:text-gray-300 border border-gray-800/50"
               }`}
             >
               {filter.icon && <span className="ml-1">{filter.icon}</span>}
@@ -125,16 +183,16 @@ export default function LiveMatches() {
           <div className="text-center py-16">
             <div className="text-6xl mb-4">⚽</div>
             <h3 className="text-xl font-bold text-gray-400 mb-2">
-              لا توجد مباريات اليوم
+              لا توجد مباريات {currentDayLabel}
             </h3>
             <p className="text-gray-600">
-              ترقب مباريات الجولة القادمة!
+              جرب يوم آخر أو دوري مختلف!
             </p>
           </div>
         )}
 
         {/* Live indicator */}
-        {hasLive && (
+        {hasLive && activeDay === todayKey && (
           <div className="text-center mt-6">
             <div className="inline-flex items-center gap-2 bg-brand-500/10 border border-brand-500/20 rounded-full px-4 py-2">
               <span className="relative flex h-2 w-2">
