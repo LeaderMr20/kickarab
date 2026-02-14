@@ -133,9 +133,13 @@ function parseESPNEvent(event, leagueInfo) {
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'public, max-age=10, stale-while-revalidate=5');
 
-  // Support date query: ?date=20260214 (YYYYMMDD format)
-  const dateParam = req.query.date || '';
-  const dateQuery = dateParam ? `?dates=${dateParam}` : '';
+  // Always use a specific date - defaults to today
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+  const dateParam = req.query.date || todayStr;
+  const dateQuery = `?dates=${dateParam}`;
+  // Target date string for filtering (YYYY-MM-DD)
+  const targetDate = `${dateParam.slice(0,4)}-${dateParam.slice(4,6)}-${dateParam.slice(6,8)}`;
 
   const leagueKeys = [
     // الدوريات الكبرى
@@ -179,16 +183,24 @@ export default async function handler(req, res) {
       if (r.status === 'fulfilled') allMatches.push(...r.value);
     });
 
+    // Filter strictly by target date only
+    const filteredMatches = allMatches.filter(m => {
+      if (!m.date) return false;
+      const matchDate = new Date(m.date).toISOString().slice(0, 10);
+      return matchDate === targetDate;
+    });
+
     const liveStatuses = ['LIVE', '1H', '2H', 'HT'];
-    allMatches.sort((a, b) => {
+    filteredMatches.sort((a, b) => {
       const aP = liveStatuses.includes(a.status.short) ? 0 : a.status.short === 'NS' ? 1 : 2;
       const bP = liveStatuses.includes(b.status.short) ? 0 : b.status.short === 'NS' ? 1 : 2;
       return aP - bP;
     });
 
     return res.status(200).json({
-      matches: allMatches,
-      hasLive: allMatches.some(m => liveStatuses.includes(m.status.short)),
+      matches: filteredMatches,
+      date: targetDate,
+      hasLive: filteredMatches.some(m => liveStatuses.includes(m.status.short)),
       updated: new Date().toISOString()
     });
 

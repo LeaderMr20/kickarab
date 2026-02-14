@@ -43,7 +43,16 @@ export default function MatchCard({ match }) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <span className="text-lg">{match.league.icon}</span>
-          <span className="text-xs font-semibold text-gray-400">{match.league.nameAr}</span>
+          <div className="flex flex-col">
+            <span className="text-xs font-semibold text-gray-400">{match.league.nameAr}</span>
+            <span className="text-[10px] text-gray-600">
+              {new Date(match.date).toLocaleDateString("ar-SA", {
+                weekday: "short",
+                day: "numeric",
+                month: "short",
+              })}
+            </span>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           {live && (

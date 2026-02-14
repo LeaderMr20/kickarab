@@ -79,10 +79,7 @@ export default function LiveMatches() {
   const fetchMatches = useCallback(async (dateKey) => {
     try {
       setLoading(true);
-      const url = dateKey === todayKey
-        ? '/api/matches'
-        : `/api/matches?date=${dateKey}`;
-      const res = await fetch(url);
+      const res = await fetch(`/api/matches?date=${dateKey}`);
       if (!res.ok) throw new Error('Failed');
       const data = await res.json();
       setAllMatches(data.matches || []);
