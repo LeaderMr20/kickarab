@@ -18,6 +18,40 @@ const teamNamesAr = {
   'Bayern Munich': 'بايرن ميونخ', 'Paris Saint-Germain': 'باريس سان جيرمان',
   'Inter Milan': 'إنتر ميلان', 'AC Milan': 'إيه سي ميلان', 'Juventus': 'يوفنتوس',
   'Borussia Dortmund': 'بروسيا دورتموند',
+  // الدوري الألماني
+  'Bayer Leverkusen': 'باير ليفركوزن', 'RB Leipzig': 'لايبزيغ',
+  'Eintracht Frankfurt': 'آينتراخت فرانكفورت', 'VfB Stuttgart': 'شتوتغارت',
+  'SC Freiburg': 'فرايبورغ', 'Mainz 05': 'ماينز', 'Wolfsburg': 'فولفسبورغ',
+  'Borussia Monchengladbach': 'مونشنغلادباخ', 'Werder Bremen': 'فيردر بريمن',
+  'Union Berlin': 'يونيون برلين', 'FC Augsburg': 'أوغسبورغ',
+  'TSG Hoffenheim': 'هوفنهايم', 'VfL Bochum': 'بوخوم',
+  'Holstein Kiel': 'هولشتاين كيل', 'FC Heidenheim': 'هايدنهايم', 'FC St. Pauli': 'سانت باولي',
+  // الدوري الإيطالي
+  'SSC Napoli': 'نابولي', 'Napoli': 'نابولي', 'AS Roma': 'روما', 'Roma': 'روما',
+  'Lazio': 'لاتسيو', 'SS Lazio': 'لاتسيو', 'Atalanta': 'أتالانتا',
+  'ACF Fiorentina': 'فيورنتينا', 'Fiorentina': 'فيورنتينا',
+  'Bologna': 'بولونيا', 'Torino': 'تورينو', 'Udinese': 'أودينيزي',
+  'Genoa': 'جنوى', 'Cagliari': 'كالياري', 'Empoli': 'إمبولي',
+  'Hellas Verona': 'هيلاس فيرونا', 'Parma': 'بارما', 'Como': 'كومو',
+  'Lecce': 'ليتشي', 'Venezia': 'فينيسيا', 'Monza': 'مونزا',
+  // الدوري الفرنسي
+  'Olympique Marseille': 'مارسيليا', 'Marseille': 'مارسيليا',
+  'AS Monaco': 'موناكو', 'Monaco': 'موناكو',
+  'Olympique Lyonnais': 'ليون', 'Lyon': 'ليون',
+  'LOSC Lille': 'ليل', 'Lille': 'ليل',
+  'OGC Nice': 'نيس', 'Nice': 'نيس',
+  'Stade Rennais': 'رين', 'Rennes': 'رين',
+  'RC Lens': 'لانس', 'Lens': 'لانس',
+  'Stade Brestois': 'بريست', 'Brest': 'بريست',
+  'RC Strasbourg': 'ستراسبورغ', 'Strasbourg': 'ستراسبورغ',
+  // الدوري الإسباني إضافات
+  'Athletic Bilbao': 'أتلتيك بيلباو', 'Villarreal': 'فياريال',
+  'Real Betis': 'ريال بيتيس', 'Real Sociedad': 'ريال سوسيداد',
+  'Girona': 'جيرونا', 'Mallorca': 'مايوركا', 'Osasuna': 'أوساسونا',
+  'Celta Vigo': 'سيلتا فيغو', 'Rayo Vallecano': 'رايو فاليكانو',
+  'Sevilla': 'إشبيلية', 'Getafe': 'خيتافي', 'Valencia': 'فالنسيا',
+  'Espanyol': 'إسبانيول', 'Las Palmas': 'لاس بالماس',
+  'Deportivo Alaves': 'ألافيس', 'Leganes': 'ليغانيس', 'Valladolid': 'بلد الوليد',
 };
 
 const statusAr = {
@@ -100,10 +134,21 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'public, max-age=10, stale-while-revalidate=5');
 
   const leagues = [
+    // الدوريات الكبرى
     { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard', id: 39, nameAr: 'الدوري الإنجليزي', icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
     { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/sau.1/scoreboard', id: 307, nameAr: 'دوري روشن', icon: '🇸🇦' },
-    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard', id: 2, nameAr: 'دوري الأبطال', icon: '🏆' },
     { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard', id: 140, nameAr: 'الدوري الإسباني', icon: '🇪🇸' },
+    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard', id: 135, nameAr: 'الدوري الإيطالي', icon: '🇮🇹' },
+    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard', id: 78, nameAr: 'الدوري الألماني', icon: '🇩🇪' },
+    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/fra.1/scoreboard', id: 61, nameAr: 'الدوري الفرنسي', icon: '🇫🇷' },
+    // البطولات الأوروبية
+    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard', id: 2, nameAr: 'دوري الأبطال', icon: '🏆' },
+    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa/scoreboard', id: 3, nameAr: 'الدوري الأوروبي', icon: '🏆' },
+    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa.conf/scoreboard', id: 848, nameAr: 'دوري المؤتمر', icon: '🏆' },
+    // الكؤوس المحلية
+    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.fa/scoreboard', id: 45, nameAr: 'كأس الاتحاد الإنجليزي', icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/eng.league_cup/scoreboard', id: 48, nameAr: 'كأس الرابطة الإنجليزية', icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+    { url: 'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.copa_del_rey/scoreboard', id: 143, nameAr: 'كأس ملك إسبانيا', icon: '🇪🇸' },
   ];
 
   try {

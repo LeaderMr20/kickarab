@@ -3,13 +3,20 @@ import MatchCard from "./MatchCard";
 
 const LEAGUE_FILTERS = [
   { key: "all", label: "الكل" },
-  { key: "epl", label: "الدوري الإنجليزي", icon: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
-  { key: "spl", label: "الدوري السعودي", icon: "🇸🇦" },
-  { key: "ucl", label: "دوري الأبطال", icon: "🏆" },
-  { key: "laliga", label: "الدوري الإسباني", icon: "🇪🇸" },
+  { key: "epl", label: "الإنجليزي", icon: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+  { key: "spl", label: "السعودي", icon: "🇸🇦" },
+  { key: "laliga", label: "الإسباني", icon: "🇪🇸" },
+  { key: "seriea", label: "الإيطالي", icon: "🇮🇹" },
+  { key: "bundesliga", label: "الألماني", icon: "🇩🇪" },
+  { key: "ligue1", label: "الفرنسي", icon: "🇫🇷" },
+  { key: "cups", label: "البطولات", icon: "🏆" },
 ];
 
-const leagueIdMap = { epl: 39, spl: 307, ucl: 2, laliga: 140 };
+const leagueIdMap = {
+  epl: 39, spl: 307, laliga: 140,
+  seriea: 135, bundesliga: 78, ligue1: 61,
+  cups: [2, 3, 848, 45, 48, 143],
+};
 
 function SkeletonCard() {
   return (
@@ -62,8 +69,11 @@ export default function LiveMatches() {
 
   const matches = useMemo(() => {
     if (activeFilter === "all") return allMatches;
-    const leagueId = leagueIdMap[activeFilter];
-    return allMatches.filter((m) => m.league.id === leagueId);
+    const filterVal = leagueIdMap[activeFilter];
+    if (Array.isArray(filterVal)) {
+      return allMatches.filter((m) => filterVal.includes(m.league.id));
+    }
+    return allMatches.filter((m) => m.league.id === filterVal);
   }, [allMatches, activeFilter]);
 
   return (
